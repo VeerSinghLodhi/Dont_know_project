@@ -4,9 +4,12 @@ import com.example.ProjectHON.Theme_masterpackage.ThemeMaster;
 import com.example.ProjectHON.Theme_masterpackage.ThemeMasterRepository;
 import com.example.ProjectHON.User_masterpackage.UserMaster;
 import com.example.ProjectHON.User_masterpackage.UserMasterRepository;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,18 +29,24 @@ public class PostMasterController {
     @Autowired
     ThemeMasterRepository themeMasterRepository;
 
+    @GetMapping("/add-new-post")
+    public String getNewPost(HttpSession  session, Model model){
+        UserMaster userMaster = (UserMaster) session.getAttribute("user_master");
+        model.addAttribute("user_master", userMaster);
+        return "addpost";
+    }
+
 
 
     @PostMapping("/add-post")
     public ResponseEntity<Map<String, String>> addPost(
             @RequestParam("userId")Long userId,
-            @RequestParam("theme") String theme,
             @RequestParam("photo") MultipartFile photo,
             @RequestParam("hashtags") String hashtags,
             @RequestParam("caption") String caption){
         try{
             UserMaster userMaster = userMasterRepository.findById(userId).orElse(null);
-            ThemeMaster themeMaster= themeMasterRepository.getThemeByThemeName(theme);
+            ThemeMaster themeMaster= themeMasterRepository.getThemeByThemeName("Minimal");
 
             PostMaster postMaster = new PostMaster();
             postMaster.setCaption(caption);
@@ -46,16 +55,16 @@ public class PostMasterController {
             postMaster.setUser(userMaster);
             postMaster.setTheme(themeMaster);
             postMaster.setDateTime(LocalDateTime.now());
-            postMaster.setRating(0l);
+//            postMaster.setRating(0l);
 
             postRepository.save(postMaster);
 
 
-            System.out.println("User Id Is " + userId);
-            System.out.println("Theme: " + theme);
-            System.out.println("Caption: " + caption);
-            System.out.println("Hashtags: " + hashtags);
-            System.out.println("File Name: " + photo.getOriginalFilename());
+//            System.out.println("User Id Is " + userId);
+////            System.out.println("Theme: " + theme);
+//            System.out.println("Caption: " + caption);
+//            System.out.println("Hashtags: " + hashtags);
+//            System.out.println("File Name: " + photo.getOriginalFilename());
 
             Map<String, String> response = new HashMap<>();
             response.put("message", "Post uploaded successfully!");
