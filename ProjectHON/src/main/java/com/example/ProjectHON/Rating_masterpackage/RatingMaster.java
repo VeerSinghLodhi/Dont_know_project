@@ -15,9 +15,9 @@ public class RatingMaster {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int rating_id;
 
-   @ManyToOne
-   @JoinColumn(name ="from_userid", nullable = false)
-   private UserMaster userFrom;
+    @ManyToOne
+    @JoinColumn(name ="from_userid", nullable = false)
+    private UserMaster userFrom;
 
     @ManyToOne
     @JoinColumn(name = "to_userid", nullable = false)
@@ -30,6 +30,7 @@ public class RatingMaster {
     private Double rating;
     private LocalDate postDate;
     private LocalTime postTime;
+
 
 
     public RatingMaster(int rating_id, UserMaster userFrom, UserMaster userTo, PostMaster post_id, Double rating, LocalDate postDate, LocalTime postTime) {
