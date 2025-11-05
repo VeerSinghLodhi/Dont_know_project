@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rate Photos - HotOrNot</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+          background: #0d1117;
+          color: #fff;
+          font-family: 'Poppins', sans-serif;
+          padding-bottom: 100px;
+        }
+
+        .container {
+          max-width: 700px;
+        }
+
+        /* 🔥 Add Post Form */
+        .add-post {
+          background: rgba(255, 255, 255, 0.05);
+          border-radius: 15px;
+          padding: 20px;
+          margin-top: 40px;
+          box-shadow: 0 4px 20px rgba(255, 255, 255, 0.15);
+        }
+
+        .add-post input,
+        .add-post textarea {
+          background: rgba(255, 255, 255, 0.1);
+          color: white;
+          border: none;
+        }
+
+        .add-post input::placeholder,
+        .add-post textarea::placeholder {
+          color: rgba(255, 255, 255, 0.7);
+        }
+
+        .add-post input:focus,
+        .add-post textarea:focus {
+          box-shadow: none;
+          border: 1px solid #ff0000;
+        }
+
+        .add-post button {
+          background: #ff0000;
+          border: none;
+          transition: 0.3s;
+        }
+
+        .add-post button:hover {
+          background: #e60000;
+        }
+
+        /* 🔥 Rating Cards */
+        .rating-card {
+          width: 100%;
+          position: relative;
+          margin: 30px 0;
+          border-radius: 12px;
+          overflow: hidden;
+          box-shadow: 0 4px 25px rgba(255, 255, 255, 0.2);
+          transition: transform 0.3s ease-in-out;
+        }
+
+        .rating-card:hover {
+          transform: scale(1.02);
+        }
+
+        .rating-card img {
+          width: 100%;
+          display: block;
+        }
+
+        /* Timer Section */
+        .timer-container {
+          position: absolute;
+          bottom: 10px;
+          left: 10px;
+          right: 10px;
+          color: #fff;
+          font-weight: 600;
+        }
+
+        .timer-text {
+          text-align: right;
+          font-size: 14px;
+          margin-bottom: 5px;
+        }
+
+        .progress-container {
+          width: 100%;
+          height: 6px;
+          background: rgba(255, 255, 255, 0.3);
+          border-radius: 3px;
+          overflow: hidden;
+        }
+
+        .progress-bar {
+          width: 100%;
+          height: 100%;
+          background: #ff0000;
+          transition: width 1s linear;
+        }
+
+        /* Caption */
+        .caption {
+          position: absolute;
+          bottom: 40px;
+          left: 10px;
+          color: #fff;
+          background: rgba(0, 0, 0, 0.6);
+          padding: 5px 10px;
+          border-radius: 8px;
+          font-size: 13px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <h2 class="text-center mt-4 mb-3">🔥 Rate Photos - HotOrNot 🔥</h2>
+
+    <!-- 🆕 Add New Post Form -->
+    <div class="add-post">
+        <h5 class="mb-3">Add New Post</h5>
+        <form id="addPostForm" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="userId" id="userId" th:value="${user_master.userId}">
+
+            <div class="mb-3">
+                <label class="form-label">Upload Image</label>
+                <input type="file" id="photoInput" class="form-control" name="imageFile" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Caption</label>
+                <textarea class="form-control" id="captionInput" name="caption" rows="2" placeholder="Write your caption..."
+                          required></textarea>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Hashtag</label>
+                <input type="text" id="hashtagInput" class="form-control" name="hashtag" placeholder="#travel #fun">
+            </div>
+            <button type="submit" class="btn btn-danger w-100">Post</button>
+        </form>
+    </div>
+<div>
+    <a href="/user/dashboard">
+        Show Post
+    </a>
+</div>
+</div>
+
+<!-- 🔥 Timer Script -->
+<script>
+    // Form submission
+    document.getElementById('addPostForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      // const photoInput = ;
+      // const hashtagChips = document.querySelectorAll('.hashtag-chip');
+      // // const hashtagInput = ;
+      // const addPostForm = document.getElementById('addPostForm');
+
+      const formData = new FormData();
+      formData.append('userId', document.getElementById('userId').value);
+      formData.append('photo', document.getElementById('photoInput').files[0]);
+      formData.append('hashtags', document.getElementById('hashtagInput').value);
+      formData.append('caption', document.getElementById('captionInput').value);
+
+      fetch('/add-post', {
+        method: 'POST',
+        body: formData
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log('Server Response:', data);
+          alert('Post created successfully! 🎉');
+          addPostForm.reset();
+          removeImage();
+          themeOptions.forEach(opt => opt.classList.remove('selected'));
+          themeOptions[1].classList.add('selected'); // Default to vibrant
+        })
+        .catch(error => console.error('Error:', error));
+    });
+
+</script>
+</body>
+
+</html>
