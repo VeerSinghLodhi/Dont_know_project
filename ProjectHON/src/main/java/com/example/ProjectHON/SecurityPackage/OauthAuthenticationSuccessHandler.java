@@ -45,7 +45,7 @@ public class OauthAuthenticationSuccessHandler implements AuthenticationSuccessH
             user = new UserMaster();
             user.setEmail(email);
             user.setFullName(name);
-            user.setPassword("Sagar@123");
+           // user.setPassword("Sagar@123");
             user.setStatus(true);
             user.setRoleList(List.of("ROLE_USER"));
             userMasterRepository.save(user);
@@ -124,3 +124,4 @@ public class OauthAuthenticationSuccessHandler implements AuthenticationSuccessH
 ////            new DefaultRedirectStrategy().sendRedirect(request,response,"/user/dashboard");
 //    }
 }
+
