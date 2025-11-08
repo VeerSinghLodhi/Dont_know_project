@@ -20,7 +20,5 @@ public interface RatingRepository extends JpaRepository<RatingMaster,Long> {
     @Query("SELECT SUM(r.rating) FROM RatingMaster r WHERE r.userFrom = :user")
     Double findAllPostSumRatingByUser(@Param("user") UserMaster user);
 
-//    // (Optional) Find all post averages together
-//    @Query("SELECT r.post_id.postId, AVG(r.rating) FROM RatingMaster r GROUP BY r.post_id.postId")
-//    List<Object[]> findAllPostAverages();
 }
+
