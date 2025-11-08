@@ -5,14 +5,21 @@ import com.example.ProjectHON.Post_masterpackage.PostMaster;
 import com.example.ProjectHON.Rating_masterpackage.RatingMaster;
 import com.example.ProjectHON.Whisper_masterpackage.WhisperMaster;
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Entity
 @Table(name = "users_master")
-public class UserMaster{
+public class UserMaster implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
@@ -37,6 +44,8 @@ public class UserMaster{
 
     private String username;
 
+    private String fullName;
+
     private String password;
 
     private String email;
@@ -51,7 +60,7 @@ public class UserMaster{
 
     private LocalDate joinDate;
 
-    private String status; //Active, Inactive
+    private Boolean status = true; //Active, Inactive
 
     private String contactNo;
 
@@ -121,8 +130,40 @@ public class UserMaster{
         return username;
     }
 
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return status;
+    }
+
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "role")
+    private List<String> roleList = new ArrayList<>();
+
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        Collection<SimpleGrantedAuthority>roles=roleList.stream().map(role->new SimpleGrantedAuthority(role)).collect(Collectors.toList());
+        return roles;
     }
 
     public String getPassword() {
@@ -181,11 +222,9 @@ public class UserMaster{
         this.joinDate = joinDate;
     }
 
-    public String getStatus() {
-        return status;
-    }
 
-    public void setStatus(String status) {
+
+    public void setStatus(Boolean status) {
         this.status = status;
     }
 
@@ -219,5 +258,21 @@ public class UserMaster{
 
     public void setJiolocation(String jiolocation) {
         this.jiolocation = jiolocation;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public List<String> getRoleList() {
+        return roleList;
+    }
+
+    public void setRoleList(List<String> roleList) {
+        this.roleList = roleList;
     }
 }
