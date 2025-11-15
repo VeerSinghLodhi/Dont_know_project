@@ -4,11 +4,11 @@ import com.example.ProjectHON.Badge_masterpackage.BadgeMaster;
 import com.example.ProjectHON.Post_masterpackage.PostMaster;
 import com.example.ProjectHON.Rating_masterpackage.RatingMaster;
 import com.example.ProjectHON.Whisper_masterpackage.WhisperMaster;
+import com.example.ProjectHON.streakhistorypackage.StreakHistory;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -42,6 +42,10 @@ public class UserMaster implements UserDetails {
     @ManyToMany(mappedBy = "receiver", cascade = CascadeType.ALL)
     private List<WhisperMaster> receivedWhispers; // Receiver
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<StreakHistory> streakHistory = new ArrayList<>();
+
+
     private String username;
 
     private String fullName;
@@ -68,7 +72,12 @@ public class UserMaster implements UserDetails {
 
     private String bio;
 
-    private String jiolocation;
+    private String jeoLocation;
+
+    private Integer streakDays = 0  ;          // Number of consecutive days the user has posted
+    private Integer streakWeeks = 0;         // Number of consecutive full weeks
+    private Integer currentPointsPerPost = 0 ; // Current reward rate (points per post)
+    private LocalDate lastPostDate;       // Date of the user's last post
 
     public Long getUserId() {
         return userId;
@@ -252,12 +261,13 @@ public class UserMaster implements UserDetails {
         this.bio = bio;
     }
 
-    public String getJiolocation() {
-        return jiolocation;
+
+    public String getJeoLocation() {
+        return jeoLocation;
     }
 
-    public void setJiolocation(String jiolocation) {
-        this.jiolocation = jiolocation;
+    public void setJeoLocation(String jeoLocation) {
+        this.jeoLocation = jeoLocation;
     }
 
     public String getFullName() {
@@ -274,5 +284,49 @@ public class UserMaster implements UserDetails {
 
     public void setRoleList(List<String> roleList) {
         this.roleList = roleList;
+    }
+
+    public List<StreakHistory> getStreakHistory() {
+        return streakHistory;
+    }
+
+    public void setStreakHistory(List<StreakHistory> streakHistory) {
+        this.streakHistory = streakHistory;
+    }
+
+    public Boolean getStatus() {
+        return status;
+    }
+
+    public int getStreakDays() {
+        return streakDays;
+    }
+
+    public void setStreakDays(int streakDays) {
+        this.streakDays = streakDays;
+    }
+
+    public int getStreakWeeks() {
+        return streakWeeks;
+    }
+
+    public void setStreakWeeks(int streakWeeks) {
+        this.streakWeeks = streakWeeks;
+    }
+
+    public int getCurrentPointsPerPost() {
+        return currentPointsPerPost;
+    }
+
+    public void setCurrentPointsPerPost(int currentPointsPerPost) {
+        this.currentPointsPerPost = currentPointsPerPost;
+    }
+
+    public LocalDate getLastPostDate() {
+        return lastPostDate;
+    }
+
+    public void setLastPostDate(LocalDate lastPostDate) {
+        this.lastPostDate = lastPostDate;
     }
 }
