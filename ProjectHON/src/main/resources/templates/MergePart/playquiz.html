@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Quiz</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --coral: #F73B20;
+            --coral-light: #ff5238;
+            --coral-bg: #ffe5df;
+            --coral-soft: rgba(247, 59, 32, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #fff3ee, #ffe5df);
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: clamp(15px, 4vw, 30px);
+            color: #1a1a1a;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* --------------------- MAIN WRAPPER --------------------- */
+        .quiz-wrapper {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: clamp(20px, 5vw, 35px);
+            border-radius: clamp(20px, 4vw, 30px);
+            box-shadow: 0 10px 40px rgba(247, 59, 32, 0.18);
+            border: 1px solid rgba(247, 59, 32, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* floating soft coral circles */
+        .bg-orb {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--coral-soft);
+            filter: blur(60px);
+            animation: orbFloat 12s infinite ease-in-out alternate;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .orb1 {
+            width: clamp(150px, 30vw, 250px);
+            height: clamp(150px, 30vw, 250px);
+            top: -60px;
+            right: -60px;
+        }
+
+        .orb2 {
+            width: clamp(120px, 25vw, 200px);
+            height: clamp(120px, 25vw, 200px);
+            bottom: -40px;
+            left: -40px;
+        }
+
+        @keyframes orbFloat {
+            0% { transform: translate(0,0); }
+            100% { transform: translate(30px, -40px); }
+        }
+
+        /* --------------------- HEADING --------------------- */
+        h2 {
+            text-align: center;
+            color: var(--coral);
+            font-size: clamp(24px, 6vw, 36px);
+            font-weight: 700;
+            margin-bottom: clamp(20px, 4vw, 30px);
+            animation: fadeIn 0.8s ease-out;
+            position: relative;
+            z-index: 1;
+            line-height: 1.3;
+            padding: 0 10px;
+        }
+
+        /* --------------------- FORM --------------------- */
+        form {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* --------------------- QUIZ CARD --------------------- */
+        .quiz-card {
+            background: #ffffff;
+            padding: clamp(15px, 3vw, 25px);
+            border-radius: clamp(15px, 3vw, 20px);
+            box-shadow: 0 4px 20px rgba(247, 59, 32, 0.1);
+            margin-bottom: clamp(15px, 3vw, 25px);
+            border-left: clamp(4px, 1vw, 6px) solid var(--coral);
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        h4 {
+            font-size: clamp(16px, 3.5vw, 20px);
+            color: #222;
+            margin-bottom: clamp(12px, 2.5vw, 15px);
+            font-weight: 600;
+            line-height: 1.5;
+            word-wrap: break-word;
+        }
+
+        label {
+            display: flex;
+            align-items: flex-start;
+            font-size: clamp(14px, 3vw, 17px);
+            margin: clamp(8px, 2vw, 10px) 0;
+            cursor: pointer;
+            padding: clamp(10px, 2vw, 12px);
+            border-radius: clamp(10px, 2vw, 12px);
+            background: #fff6f5;
+            border: 1px solid rgba(247, 59, 32, 0.2);
+            transition: all 0.25s ease;
+            word-wrap: break-word;
+            line-height: 1.5;
+        }
+
+        label:hover {
+            background: #ffe4df;
+            border-color: var(--coral);
+            transform: translateY(-2px);
+        }
+
+        label:active {
+            transform: translateY(0);
+        }
+
+        label span {
+            flex: 1;
+            word-break: break-word;
+        }
+
+        input[type="radio"] {
+            margin-right: clamp(8px, 2vw, 10px);
+            accent-color: var(--coral);
+            min-width: 18px;
+            min-height: 18px;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        hr {
+            border: none;
+            border-bottom: 1px solid rgba(247, 59, 32, 0.2);
+            margin-top: clamp(15px, 3vw, 20px);
+        }
+
+        /* --------------------- SUBMIT BUTTON --------------------- */
+        button {
+            width: 100%;
+            background: var(--coral);
+            padding: clamp(12px, 3vw, 15px);
+            font-size: clamp(16px, 3.5vw, 20px);
+            color: white;
+            border: none;
+            border-radius: clamp(12px, 2.5vw, 15px);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 22px rgba(247, 59, 32, 0.35);
+            font-weight: 600;
+            margin-top: clamp(10px, 2vw, 15px);
+            touch-action: manipulation;
+        }
+
+        button:hover {
+            background: var(--coral-light);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(247, 59, 32, 0.45);
+        }
+
+        button:active {
+            transform: translateY(-1px);
+        }
+
+        /* --------------------- ANIMATIONS --------------------- */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --------------------- RESPONSIVE BREAKPOINTS --------------------- */
+
+        /* Small phones (320px - 480px) */
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .quiz-wrapper {
+                padding: 15px;
+                border-radius: 20px;
+            }
+
+            h2 {
+                font-size: 22px;
+                margin-bottom: 15px;
+            }
+
+            .quiz-card {
+                padding: 12px;
+                margin-bottom: 12px;
+            }
+
+            h4 {
+                font-size: 15px;
+                margin-bottom: 10px;
+            }
+
+            label {
+                font-size: 13px;
+                padding: 8px;
+                margin: 6px 0;
+            }
+
+            input[type="radio"] {
+                min-width: 16px;
+                min-height: 16px;
+            }
+
+            button {
+                padding: 12px;
+                font-size: 16px;
+            }
+
+            .orb1, .orb2 {
+                filter: blur(40px);
+            }
+        }
+
+        /* Medium phones (481px - 767px) */
+        @media (min-width: 481px) and (max-width: 767px) {
+            .quiz-wrapper {
+                padding: 20px;
+            }
+
+            h2 {
+                font-size: 26px;
+            }
+
+            h4 {
+                font-size: 17px;
+            }
+
+            label {
+                font-size: 15px;
+            }
+        }
+
+        /* Tablets (768px - 1024px) */
+        @media (min-width: 768px) and (max-width: 1024px) {
+            .quiz-wrapper {
+                padding: 28px;
+            }
+
+            h2 {
+                font-size: 32px;
+            }
+        }
+
+        /* Large screens (1025px+) */
+        @media (min-width: 1025px) {
+            body {
+                padding: 40px 20px;
+            }
+        }
+
+        /* Landscape orientation adjustments */
+        @media (max-height: 600px) and (orientation: landscape) {
+            body {
+                padding: 15px;
+            }
+
+            .quiz-wrapper {
+                padding: 20px;
+            }
+
+            h2 {
+                font-size: 24px;
+                margin-bottom: 15px;
+            }
+
+            .quiz-card {
+                margin-bottom: 15px;
+                padding: 15px;
+            }
+        }
+
+        /* High DPI screens */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .quiz-wrapper {
+                box-shadow: 0 10px 40px rgba(247, 59, 32, 0.2);
+            }
+        }
+
+        /* Touch device improvements */
+        @media (hover: none) and (pointer: coarse) {
+            label {
+                padding: 14px;
+                margin: 10px 0;
+            }
+
+            button {
+                padding: 16px;
+                font-size: 18px;
+            }
+
+            input[type="radio"] {
+                min-width: 20px;
+                min-height: 20px;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="quiz-wrapper">
+
+    <div class="bg-orb orb1"></div>
+    <div class="bg-orb orb2"></div>
+
+    <h2>🌸 Play Quiz With Your Crush 🌸</h2>
+
+    <form th:action="@{/user/saveAnswers}" method="post">
+
+        <div th:each="quiz : ${questions}" class="quiz-card">
+
+            <input type="hidden" th:value="${playWithId}" name="playWithId">
+
+            <h4>❓ <span th:text="${quiz.questionText}"></span></h4>
+
+            <!-- Option A -->
+            <label>
+                <input type="radio"
+                       th:name="'answers[' + ${quiz.id} + ']'"
+                       value="A"
+                       required>
+                <span>🅰️ <span th:text="${quiz.optionA}"></span></span>
+            </label>
+
+            <!-- Option B -->
+            <label>
+                <input type="radio"
+                       th:name="'answers[' + ${quiz.id} + ']'"
+                       value="B"
+                       required>
+                <span>🅱️ <span th:text="${quiz.optionB}"></span></span>
+            </label>
+
+            <hr>
+        </div>
+
+        <button type="submit">✨ Submit Quiz ✨</button>
+
+    </form>
+</div>
+
+</body>
+</html>
+
+<!--<!DOCTYPE html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">-->
+<!--    <title>Quiz</title>-->
+
+<!--    &lt;!&ndash; Google Fonts &ndash;&gt;-->
+<!--    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">-->
+
+<!--    <style>-->
+<!--        :root {-->
+<!--            &#45;&#45;coral: #F73B20;-->
+<!--            &#45;&#45;coral-light: #ff5238;-->
+<!--            &#45;&#45;coral-bg: #ffe5df;-->
+<!--            &#45;&#45;coral-soft: rgba(247, 59, 32, 0.15);-->
+<!--        }-->
+
+<!--        body {-->
+<!--            background: linear-gradient(135deg, #fff3ee, #ffe5df);-->
+<!--            font-family: 'Poppins', sans-serif;-->
+<!--            margin: 0;-->
+<!--            padding: 30px 15px;-->
+<!--            color: #1a1a1a;-->
+<!--            overflow-x: hidden;-->
+<!--        }-->
+
+<!--        /* -&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45; MAIN WRAPPER -&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45; */-->
+<!--        .quiz-wrapper {-->
+<!--            max-width: 800px;-->
+<!--            margin: auto;-->
+<!--            background: white;-->
+<!--            padding: 35px;-->
+<!--            border-radius: 30px;-->
+<!--            box-shadow: 0 10px 40px rgba(247, 59, 32, 0.18);-->
+<!--            border: 1px solid rgba(247, 59, 32, 0.15);-->
+<!--            position: relative;-->
+<!--            overflow: hidden;-->
+<!--        }-->
+
+<!--        /* floating soft coral circles */-->
+<!--        .bg-orb {-->
+<!--            position: absolute;-->
+<!--            border-radius: 50%;-->
+<!--            background: var(&#45;&#45;coral-soft);-->
+<!--            filter: blur(60px);-->
+<!--            animation: orbFloat 12s infinite ease-in-out alternate;-->
+<!--            z-index: -1;-->
+<!--        }-->
+
+<!--        .orb1 { width: 250px; height: 250px; top: -60px; right: -60px; }-->
+<!--        .orb2 { width: 200px; height: 200px; bottom: -40px; left: -40px; }-->
+
+<!--        @keyframes orbFloat {-->
+<!--            0% { transform: translate(0,0); }-->
+<!--            100% { transform: translate(30px, -40px); }-->
+<!--        }-->
+
+<!--        /* -&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45; HEADING -&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45; */-->
+<!--        h2 {-->
+<!--            text-align: center;-->
+<!--            color: var(&#45;&#45;coral);-->
+<!--            font-size: 36px;-->
+<!--            font-weight: 700;-->
+<!--            margin-bottom: 30px;-->
+<!--            animation: fadeIn 0.8s ease-out;-->
+<!--        }-->
+
+<!--        /* -&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45; QUIZ CARD -&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45; */-->
+<!--        .quiz-card {-->
+<!--            background: #ffffff;-->
+<!--            padding: 25px;-->
+<!--            border-radius: 20px;-->
+<!--            box-shadow: 0 4px 20px rgba(247, 59, 32, 0.1);-->
+<!--            margin-bottom: 25px;-->
+<!--            border-left: 6px solid var(&#45;&#45;coral);-->
+<!--            animation: fadeInUp 0.5s ease-out;-->
+<!--        }-->
+
+<!--        h4 {-->
+<!--            font-size: 20px;-->
+<!--            color: #222;-->
+<!--            margin-bottom: 15px;-->
+<!--            font-weight: 600;-->
+<!--        }-->
+
+<!--        label {-->
+<!--            display: block;-->
+<!--            font-size: 17px;-->
+<!--            margin: 10px 0;-->
+<!--            cursor: pointer;-->
+<!--            padding: 12px;-->
+<!--            border-radius: 12px;-->
+<!--            background: #fff6f5;-->
+<!--            border: 1px solid rgba(247, 59, 32, 0.2);-->
+<!--            transition: 0.25s ease;-->
+<!--        }-->
+
+<!--        label:hover {-->
+<!--            background: #ffe4df;-->
+<!--            border-color: var(&#45;&#45;coral);-->
+<!--            transform: translateY(-2px);-->
+<!--        }-->
+
+<!--        input[type="radio"] {-->
+<!--            margin-right: 10px;-->
+<!--            accent-color: var(&#45;&#45;coral);-->
+<!--        }-->
+
+<!--        hr {-->
+<!--            border: none;-->
+<!--            border-bottom: 1px solid rgba(247, 59, 32, 0.2);-->
+<!--            margin-top: 20px;-->
+<!--        }-->
+
+<!--        /* -&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45; SUBMIT BUTTON -&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45; */-->
+<!--        button {-->
+<!--            width: 100%;-->
+<!--            background: var(&#45;&#45;coral);-->
+<!--            padding: 15px;-->
+<!--            font-size: 20px;-->
+<!--            color: white;-->
+<!--            border: none;-->
+<!--            border-radius: 15px;-->
+<!--            cursor: pointer;-->
+<!--            transition: 0.3s ease;-->
+<!--            box-shadow: 0 8px 22px rgba(247, 59, 32, 0.35);-->
+<!--            font-weight: 600;-->
+<!--        }-->
+
+<!--        button:hover {-->
+<!--            background: var(&#45;&#45;coral-light);-->
+<!--            transform: translateY(-3px);-->
+<!--            box-shadow: 0 12px 30px rgba(247, 59, 32, 0.45);-->
+<!--        }-->
+
+<!--        /* -&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45; ANIMATIONS -&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45; */-->
+<!--        @keyframes fadeIn {-->
+<!--            from { opacity: 0; transform: translateY(-10px); }-->
+<!--            to { opacity: 1; transform: translateY(0); }-->
+<!--        }-->
+
+<!--        @keyframes fadeInUp {-->
+<!--            from { opacity: 0; transform: translateY(12px); }-->
+<!--            to { opacity: 1; transform: translateY(0); }-->
+<!--        }-->
+
+<!--        @media (max-width: 600px) {-->
+<!--            .quiz-wrapper { padding: 25px; }-->
+<!--            h2 { font-size: 30px; }-->
+<!--        }-->
+
+<!--    </style>-->
+<!--</head>-->
+
+<!--<body>-->
+
+<!--<div class="quiz-wrapper">-->
+
+<!--    <div class="bg-orb orb1"></div>-->
+<!--    <div class="bg-orb orb2"></div>-->
+
+<!--    <h2>🌸 Play Quiz With Your Crush 🌸</h2>-->
+
+<!--    <form th:action="@{/user/saveAnswers}" method="post">-->
+
+<!--        <div th:each="quiz : ${questions}" class="quiz-card">-->
+
+<!--            <input type="hidden" th:value="${playWithId}" name="playWithId">-->
+
+<!--            <h4>❓ <span th:text="${quiz.questionText}"></span></h4>-->
+
+<!--            &lt;!&ndash; Option A &ndash;&gt;-->
+<!--            <label>-->
+<!--                <input type="radio"-->
+<!--                       th:name="'answers[' + ${quiz.id} + ']'"-->
+<!--                       value="A"-->
+<!--                       required>-->
+<!--                <span>🅰️ <span th:text="${quiz.optionA}"></span></span>-->
+<!--            </label>-->
+
+<!--            &lt;!&ndash; Option B &ndash;&gt;-->
+<!--            <label>-->
+<!--                <input type="radio"-->
+<!--                       th:name="'answers[' + ${quiz.id} + ']'"-->
+<!--                       value="B"-->
+<!--                       required>-->
+<!--                <span>🅱️ <span th:text="${quiz.optionB}"></span></span>-->
+<!--            </label>-->
+
+<!--            <hr>-->
+<!--        </div>-->
+
+<!--        <button type="submit">✨ Submit Quiz ✨</button>-->
+
+<!--    </form>-->
+<!--</div>-->
+
+<!--</body>-->
+<!--</html>-->
